@@ -42,29 +42,20 @@ app.get('/api/hello', function(req, res) {
 
 app.post('/api/shorturl', function(req, res) {
   console.log(req.body);
+  /*
   let numberInt;
   let numberBaseThirtySix;
-  let url;
-  let createdAt;
-  let submissions;  
-  let newUrl = new Url({number: "Jane Fonda", age: 84, favoriteFoods: ["eggs", "fish", "fresh fruit"]});
+  let urlString = req.body.url;
+  let createdAtDate = new Date();
+  let submissionsInt;  
+  let newUrl = new Url({number: numberInt, baseThirtySix: numberBaseThirtySix, url: urlString, createdAt: createdAtDate, submissions: submissionsInt});
   newUrl.save(function(err, data) {
     if (err) return console.error(err);
     done(null, data)
   });
+  */
 });
 
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
-
-// Mongo DB Functions
-
-const addUrl = (done) => {
-  let newUrl = new Url({number: "Jane Fonda", age: 84, favoriteFoods: ["eggs", "fish", "fresh fruit"]});
-
-  newUrl.save(function(err, data) {
-    if (err) return console.error(err);
-    done(null, data)
-  });
-};
