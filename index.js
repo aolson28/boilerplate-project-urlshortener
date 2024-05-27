@@ -52,9 +52,12 @@ app.get('/api/shorturl/:shortUrlString', (req, res) => {
 })
 
 app.post('/api/shorturl', function(req, res) {
-  console.log(URL.canParse(req.body.url));
-  if (URL.canParse(req.body.url)) {
-    let urlString = req.body.url;
+  dns.lookup(new URL(req.body.url).hostname,{ all:true },(err, addresses) => {
+    if (err) {
+    res.json({ error: 'invalid url' });
+    console.error(err);
+    } else {
+      let urlString = req.body.url;
     let urlDbIndex = Url.find({url: urlString}).then((data) => {
       if (data.length > 0) {
         // console.log(data, 'exists');
@@ -75,7 +78,6 @@ app.post('/api/shorturl', function(req, res) {
               console.error(err);
             }
           });
-          let urlDbIndexTwo = Url.find({url: urlString}).then((data) => console.log(data, 'added'));
         }).catch((err) => {
           if (err) {
             console.error(err);
@@ -83,10 +85,10 @@ app.post('/api/shorturl', function(req, res) {
         });
       }
     });
-  } else {
-    res.json({ error: 'invalid url' });
-  }
-});
+    }
+  });
+    
+  });
 
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
