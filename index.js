@@ -44,25 +44,32 @@ app.post('/api/shorturl', function(req, res) {
   let urlString = req.body.url;
   let urlDbIndex = Url.find({url: urlString}).then((data) => {
     if (data.length > 0) {
-      console.log(data, 'exists');
+      // console.log(data, 'exists');
       res.json({original_url: data[0].url, short_url: data[0].baseThirtySix});
     } else {
-      let numberInt = 1;
-      Url.find({}).sort({number: -1}).limit(1).then(function(err, data) {
-        if (err) return console.error(err);
-        numberInt = data.length > 0 ? parseInt(data[0].number) + 1 : 1;
-        done(null, data)
+      let numberInt;
+      Url.find({}).sort({ number: -1 }).limit(1).then(function(data) {
+        // console.log(data[0].number);
+        numberInt = parseInt(data[0].number) + 1;
+        let numberBaseThirtySix = numberInt.toString(36);
+        let createdAtDate = new Date();
+        let submissionsInt = 1;
+        // console.log('numberInt before save: ', numberInt)
+        let newUrl = new Url({number: numberInt, baseThirtySix: numberBaseThirtySix, url: urlString, createdAt: createdAtDate, submissions: submissionsInt});
+        newUrl.save().then(function(data) {
+          // console.log(data,'- data');
+          res.json({original_url: urlString, short_url: numberBaseThirtySix});
+        }).catch((err) => {
+          if (err) {
+            console.error(err);
+          }
+        });
+        let urlDbIndexTwo = Url.find({url: urlString}).then((data) => console.log(data, 'added'));
+      }).catch((err) => {
+        if (err) {
+          console.error(err);
+        }
       });
-      let numberBaseThirtySix = numberInt.toString(36);
-      let createdAtDate = new Date();
-      let submissionsInt = 1;
-      let newUrl = new Url({number: numberInt, baseThirtySix: numberBaseThirtySix, url: urlString, createdAt: createdAtDate, submissions: submissionsInt});
-      newUrl.save().then(function(err, data) {
-        if (err) return console.error(err);
-        res.json({original_url: urlString, short_url: numberBaseThirtySix});
-        done(null, data)
-      });
-      let urlDbIndexTwo = Url.find({url: urlString}).then((data) => console.log(data, 'added'));
     }
   });
 });
